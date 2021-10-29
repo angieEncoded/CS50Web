@@ -1,0 +1,25 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+{{title}}
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+
+    <div>
+    {% comment %} looks like this is EJS equivelent to <%- %> {% endcomment %}
+    {% autoescape off %}
+            {{ entry }}
+    {% endautoescape %}
+
+    </div>
+
+    <a class="btn btn-secondary mt-5" href="/wiki/{{title}}/edit">Edit this entry</a>
+</div>
+
+
+
+
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+
+<div class="container">
+    <h1>Edit {{title}}</h1>
+    <form action="/wiki/{{title}}/edit" method="POST">
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" name="content" rows="30">{{content}}</textarea>
+        </div>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">Submit Entry</button>
+    </form>
+
+    <a href="{% url 'index' %}">Take me home</a>
+</div>
+
+{% endblock %}

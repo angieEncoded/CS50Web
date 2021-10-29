@@ -1,0 +1,21 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+
+{% if not empty %}
+    <h1>Partially matching Pages</h1>
+
+    <ul>
+        {% for entry in partials %}
+        <li><a href="wiki/{{entry}}">{{ entry }}</a></li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+
+<a href="/">Take me Back</a>
+{% endblock %}

@@ -1,0 +1,34 @@
+{% extends "encyclopedia/layout.html" %}
+
+{% block title %}
+
+{% endblock %}
+
+{% block body %}
+
+
+
+
+<div class="container">
+    <h1>New Wiki Entry</h1>
+    <form action="{% url 'new' %}" method="POST">
+        {% comment %} I could not find an equivelent to Javascript's ternary operator{% endcomment %}
+        <div class="form-group">
+            <label for="title">Title</label>
+            
+
+            <input type="text" class="form-control" id="title" name="title" value="{%if title %}{{title}}{% endif %}">
+        </div>
+
+        <div class="form-group">
+            <label for="content">Content:</label>
+            <textarea class="form-control" id="content" name="content" rows="10">{%if content %}{{content}}{% endif %}</textarea>
+        </div>
+        {% csrf_token %}
+        <button type="submit" class="btn btn-secondary">Submit Entry</button>
+    </form>
+
+    <a href="{% url 'index' %}">Take me Back</a>
+</div>
+
+{% endblock %}

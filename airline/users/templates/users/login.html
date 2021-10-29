@@ -1,0 +1,19 @@
+{% extends "flights/layout.html" %}
+
+
+{% block body %}
+
+{% if message %}
+{{message}}
+{% endif %}
+
+
+<form action="{% url 'login' %}" method="POST">
+    {% csrf_token %}
+    <input type="text" name="username" placeholder="Username" id="">
+    <input type="password" name="password" placeholder="Password" id="">
+    <input type="submit" value="Login">
+</form>
+
+
+{% endblock %}

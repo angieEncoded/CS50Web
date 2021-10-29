@@ -1,10 +1,18 @@
 from django.shortcuts import render, redirect
 from django import forms
 from . import util
-from django.utils.html import strip_tags
+# from django.utils.html import strip_tags # took this back out since I am using Django's built in now
 from random import randrange
 from markdown2 import Markdown
 markdowner = Markdown()
+
+
+class NewEntryForm(forms.Form):
+    title = forms.CharField()
+    content = forms.CharField()
+
+class searchForm(forms.Form):
+    q = forms.CharField()
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -18,7 +26,7 @@ def title(request, title):
 
     if entry == None:
         return render(request, "encyclopedia/404.html", {
-            "title": title
+            "error": f"The entry '{title}' does not yet exist"
         })
     
     # convert it to html
@@ -33,32 +41,33 @@ def title(request, title):
 def search(request):
 
     if request.method == "POST":
-        # Get the user's search string
-        query = strip_tags(request.POST.get('q'))
-        
-        # check if it matches an entry and if it does, redirect to the page with the search string
-        if util.get_entry(query):
-            page = util.get_entry(query)
-            return redirect("title", query)
 
-        # get the list of current entries
-        currentEntries = util.list_entries()
-        filteredList = []
-        for item in currentEntries:
-            if query in item:
-                filteredList.append(item)
+        form = searchForm(request.POST)
+        if form.is_valid():
+            query = form.cleaned_data["q"]
         
-        # check and see if there is anything in the filtered list and send back to the home page if there isn't
-        if len(filteredList) == 0:
-                return render(request, "encyclopedia/index.html", {
-                    "entries": util.list_entries(),
-                    "empty": f"No entries match the search: {query} "
-                })
+            # check if it matches an entry and if it does, redirect to the page with the search string
+            if util.get_entry(query):
+                return redirect("title", query)
 
-        # Send that list through to a new page
-        return render(request, "encyclopedia/partials.html", {
-            "partials": filteredList 
-        })
+            # get the list of current entries
+            currentEntries = util.list_entries()
+            filteredList = []
+            for item in currentEntries:
+                if query in item:
+                    filteredList.append(item)
+            
+            # check and see if there is anything in the filtered list and send back to the home page if there isn't
+            if len(filteredList) == 0:
+                    return render(request, "encyclopedia/index.html", {
+                        "entries": util.list_entries(),
+                        "empty": f"No entries match the search: {query} "
+                    })
+
+            # Send that list through to a new page
+            return render(request, "encyclopedia/partials.html", {
+                "partials": filteredList 
+            })
        
     # In case the user happens to just type in /search at the end, send them to the main home page
     return redirect("index")
@@ -69,25 +78,32 @@ def new(request):
 
     if request.method == "POST":
 
-        # get data from the form
-        title = strip_tags(request.POST.get("title"))
-        content = request.POST.get("content")
+        # Access to the raw fields in the form
+        # This was my first version since I didn't want to use Django forms
+        # title = request.POST.get("title")
+        # content = request.POST.get("content")
 
-        # Sanitize Markdown data
+        # Get the form and use Django's cleanup functions
+        # However, it seems that we don't have to use Django to display the form, we can still build it 
+        # in the html and use the class inside of python and get access to all the validation stuff Django does
+        form = NewEntryForm(request.POST)
+        if form.is_valid():
+            title = form.cleaned_data["title"]
+            content = form.cleaned_data["content"]
 
+            # Check if the title exists
+            entry = util.get_entry(title)
+            if entry != None:
+                return render(request, "encyclopedia/new.html", {
+                    "error": "An entry with the name exists.",
+                    "title": title, 
+                    "content": content
+                })
 
-        # Check if the title exists
-        entry = util.get_entry(title)
-        if entry != None:
-            return render(request, "encyclopedia/new.html", {
-                "error": "An entry with the name exists.",
-                "title": title, 
-                "content": content
-            })
+            # if it doesn't exist then we get to save the new entry and send the user there
+            util.save_entry(title, content)
+            return redirect("title", title)
 
-        # if it doesn't exist then we get to save the new entry and send the user there
-        util.save_entry(title, content)
-        return redirect("title", title)
 
 def edit(request, title):
 
@@ -102,17 +118,34 @@ def edit(request, title):
         })
 
 
-    # going to handle th post request in here - maybe we'll learn how Django handles RESTful patterns later? 
+    # going to handle th post request in here
     if request.method == "POST":
 
-        # get data from the form
-        content = request.POST.get("content")
+        # create a new django form
+        form = NewEntryForm(request.POST)
+        if form.is_valid():
+            content = form.cleaned_data["content"]
+            incomingTitle = form.cleaned_data["title"]
 
-        # Sanitize Markdown data
+            # check and make sure the incoming title is the same as the title from the page
+            if title == incomingTitle:
 
-        # Save the data
-        util.save_entry(title, content)
-        return redirect("title", title)
+                # Save the data
+                util.save_entry(title, content)
+                return redirect("title", title)
+            else: 
+                return render(request, "encyclopedia/edit.html", {
+                "error": "What you submitted doesn't match this page",
+                "content": content,
+                "title": title
+            })
+        else:
+            content = form.cleaned_data["content"]
+            return render(request, "encyclopedia/edit.html", {
+                "error": "Form did not pass validation",
+                "content": content,
+                "title": title
+            })
 
 
 def random(request):

@@ -1,12 +1,18 @@
 {% extends "encyclopedia/layout.html" %}
 
 {% block title %}
+404 NOT FOUND
 
 {% endblock %}
 
 {% block body %}
 
-The entry "{{title}}" does not yet exist!
+<div class="container-fluid">
+    <div class="text-center mt-5">
+        <a href="{% url 'index' %}" class="text-center">Okay, Take me Back</a>
+    </div>
+</div>
 
-<a href="/">Take me Back</a>
+
+
 {% endblock %}

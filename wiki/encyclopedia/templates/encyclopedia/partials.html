@@ -5,17 +5,20 @@
 {% endblock %}
 
 {% block body %}
+<div class="container-fluid">
+    {% if not empty %}
 
-{% if not empty %}
     <h1>Partially matching Pages</h1>
 
     <ul>
         {% for entry in partials %}
-        <li><a href="wiki/{{entry}}">{{ entry }}</a></li>
+        <li><a href="{% url 'title' entry %}">{{ entry }}</a></li>
         {% endfor %}
     </ul>
-{% endif %}
+
+    {% endif %}
 
 
-<a href="/">Take me Back</a>
+    <a href="{% url 'index' %}" class="btn btn-primary mt-5">Take me Back</a>
+</div>
 {% endblock %}

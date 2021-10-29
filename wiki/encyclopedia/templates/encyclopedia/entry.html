@@ -6,14 +6,13 @@
 
 {% block body %}
 
-<div class="container">
+<div class="container-fluid">
 
-    <div>
-    {% comment %} looks like this is EJS equivelent to <%- %> {% endcomment %}
-    {% autoescape off %}
+    <div class="entryBackground">
+        {% comment %} looks like this is EJS equivelent to <%- %> {% endcomment %}
+            {% autoescape off %}
             {{ entry }}
-    {% endautoescape %}
-
+            {% endautoescape %}
     </div>
 
     <a class="btn btn-secondary mt-5" href="/wiki/{{title}}/edit">Edit this entry</a>

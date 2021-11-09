@@ -1,18 +1,33 @@
 from django.shortcuts import render, redirect
 from django import forms
+from django.utils import encoding
 from . import util
+from . import angie
 # from django.utils.html import strip_tags # took this back out since I am using Django's built in now
 from random import randrange
 from markdown2 import Markdown
+from . import convertmarkdown
+
 markdowner = Markdown()
 
+# My little class so I don't have to lose my JS muscle memory
+console = angie.Console()
 
+
+
+
+# Some basic django forms
 class NewEntryForm(forms.Form):
     title = forms.CharField()
     content = forms.CharField()
 
 class searchForm(forms.Form):
     q = forms.CharField()
+
+
+
+
+
 
 def index(request):
     return render(request, "encyclopedia/index.html", {
@@ -23,14 +38,16 @@ def title(request, title):
 
     # Get the entry and if there is no entry send back a 404 page
     entry = util.get_entry(title)
-
     if entry == None:
         return render(request, "encyclopedia/404.html", {
             "error": f"The entry '{title}' does not yet exist"
         })
     
     # convert it to html
-    htmlEntry = markdowner.convert(entry)
+    #htmlEntry = markdowner.convert(entry)
+    htmlEntry = convertmarkdown.convertIt(entry)
+
+
 
     # Send back the entry found
     return render(request, "encyclopedia/entry.html", {
@@ -69,8 +86,11 @@ def search(request):
                 "partials": filteredList 
             })
        
-    # In case the user happens to just type in /search at the end, send them to the main home page
+    # In case the user happens to try a GET or something else, send them to the main home page
     return redirect("index")
+
+
+
 
 def new(request):
     if request.method == "GET":
@@ -79,7 +99,7 @@ def new(request):
     if request.method == "POST":
 
         # Access to the raw fields in the form
-        # This was my first version since I didn't want to use Django forms
+        # This was my first version since I didn't want to use Django forms initially
         # title = request.POST.get("title")
         # content = request.POST.get("content")
 
@@ -90,6 +110,9 @@ def new(request):
         if form.is_valid():
             title = form.cleaned_data["title"]
             content = form.cleaned_data["content"]
+            # console.log(content)
+          
+
 
             # Check if the title exists
             entry = util.get_entry(title)
@@ -105,6 +128,8 @@ def new(request):
             return redirect("title", title)
 
 
+
+
 def edit(request, title):
 
     # If we are getting the page, send the editing template
@@ -112,6 +137,7 @@ def edit(request, title):
 
         # get the entry data and render the template with the data
         content = util.get_entry(title)
+        console.log(content)
         return render(request, "encyclopedia/edit.html", {
             "title": title, 
             "content": content
@@ -124,10 +150,35 @@ def edit(request, title):
         # create a new django form
         form = NewEntryForm(request.POST)
         if form.is_valid():
-            content = form.cleaned_data["content"]
-            incomingTitle = form.cleaned_data["title"]
+            # console.log(request.POST['title'])
+            # Holy macaroni, this was a mess. I noticed a bug in which every time I saved an entry, it added some 
+            # extra lines that I didn't expect. That led me to do this search:
+            # django forms adding two extra whitespace lines on save
+            # which led here:
+            # https://forum.djangoproject.com/t/django-form-is-adding-extra-spaces-everytime-content-is-edited/3986/9
+            # which led here
+            # https://stackoverflow.com/questions/63732994/is-there-a-way-to-remove-lines-being-added-to-markdown-file-from-django-textarea
+            # which led here
+            # https://stackoverflow.com/questions/63004501/newlines-in-textarea-are-doubled-in-number-when-saved
+            # which finally led here 
+            # https://stackoverflow.com/questions/63017214/why-did-bytes-solve-my-newlines-problem
+            # which didn't actually answer the question... so I looked it up in the docs and ended up using this module to force
+            # it to a bytestring
+            # https://docs.djangoproject.com/en/3.2/ref/unicode/
 
+
+            content = form.cleaned_data["content"]
+            content = encoding.smart_bytes(content, encoding='utf-8', strings_only=False, errors='strict') 
+
+            incomingTitle = form.cleaned_data["title"]
+            # console.log(form.cleaned_data['title'])
+            # console.log(title)
+            # console.log(incomingTitle)
+            # console.log(title == incomingTitle)
             # check and make sure the incoming title is the same as the title from the page
+
+            # console.log(content)
+
             if title == incomingTitle:
 
                 # Save the data
@@ -149,7 +200,7 @@ def edit(request, title):
 
 
 def random(request):
-    # print("hit the route")
+    # console.log("hit the route")
 
     # Get the entries
     entries = util.list_entries()
@@ -160,7 +211,7 @@ def random(request):
 
     # render that random page
     return redirect("title", entries[randomNumber])
-    # print(entries[randomNumber])
+    # console.log(entries[randomNumber])
 
 
 

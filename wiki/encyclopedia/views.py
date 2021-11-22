@@ -4,11 +4,12 @@ from django.utils import encoding
 from . import util
 from . import angie
 # from django.utils.html import strip_tags # took this back out since I am using Django's built in now
-from random import randrange
-from markdown2 import Markdown
+from random import seed, randrange, choice
+# from markdown2 import Markdown
+# import my own markdown converter
 from . import convertmarkdown
 
-markdowner = Markdown()
+# markdowner = Markdown()
 
 # My little class so I don't have to lose my JS muscle memory
 console = angie.Console()
@@ -45,7 +46,7 @@ def title(request, title):
     
     # convert it to html
     #htmlEntry = markdowner.convert(entry)
-    htmlEntry = convertmarkdown.convertIt(entry)
+    htmlEntry = convertmarkdown.convertIt(entry) # my markdown converter
 
 
 
@@ -108,12 +109,28 @@ def new(request):
         # in the html and use the class inside of python and get access to all the validation stuff Django does
         form = NewEntryForm(request.POST)
         if form.is_valid():
+
+
             title = form.cleaned_data["title"]
-            content = form.cleaned_data["content"]
+            # console.log(request.POST['title'])
+            # Holy macaroni, this was a mess. I noticed a bug in which every time I saved an entry, it added some 
+            # extra lines that I didn't expect. That led me to do this search:
+            # django forms adding two extra whitespace lines on save
+            # which led here:
+            # https://forum.djangoproject.com/t/django-form-is-adding-extra-spaces-everytime-content-is-edited/3986/9
+            # which led here
+            # https://stackoverflow.com/questions/63732994/is-there-a-way-to-remove-lines-being-added-to-markdown-file-from-django-textarea
+            # which led here
+            # https://stackoverflow.com/questions/63004501/newlines-in-textarea-are-doubled-in-number-when-saved
+            # which finally led here 
+            # https://stackoverflow.com/questions/63017214/why-did-bytes-solve-my-newlines-problem
+            # which didn't actually answer the question... so I looked it up in the docs and ended up using this module to force
+            # it to a bytestring
+            # https://docs.djangoproject.com/en/3.2/ref/unicode/
+            content = form.cleaned_data["content"] 
+            content = encoding.smart_bytes(content, encoding='utf-8', strings_only=False, errors='strict') 
             # console.log(content)
           
-
-
             # Check if the title exists
             entry = util.get_entry(title)
             if entry != None:
@@ -202,6 +219,8 @@ def edit(request, title):
 def random(request):
     # console.log("hit the route")
 
+
+    seed() # seed the generator from the current time (default)
     # Get the entries
     entries = util.list_entries()
 
@@ -212,15 +231,3 @@ def random(request):
     # render that random page
     return redirect("title", entries[randomNumber])
     # console.log(entries[randomNumber])
-
-
-
-
-
-
-
-
-
-
-
-

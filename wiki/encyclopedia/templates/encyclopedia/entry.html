@@ -7,8 +7,9 @@
 {% block body %}
 
 <div class="container-fluid">
-
+    <p class="text-muted text-center">Entry title: {{title}}</p>
     <div class="entryBackground">
+
         {% comment %} looks like this is EJS equivelent to <%- %> {% endcomment %}
             {% autoescape off %}
             {{ entry }}

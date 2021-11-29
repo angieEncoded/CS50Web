@@ -1,0 +1,78 @@
+
+.baskerville-font{
+    font-family: 'Libre Baskerville', serif;
+  }
+  
+
+textarea {
+    min-height: 400px;
+}
+
+
+.clickable:hover {
+    cursor: pointer;
+}
+
+
+/* Bootstrap override for a little darker background */
+.bg-light{
+    background-color: rgb(82, 82, 82);
+}
+
+.form-background{
+    background-color: rgba(207, 189, 255, 0.548);
+    /* background-color: rgba(19, 18, 18, 0.548); */
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.form-small {
+  max-width: 20rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+}
+
+
+
+/* bootstrap overrides for buttons */
+.btn-logo {
+    border: 2px solid rgb(68, 6, 104);
+    color: white;
+    background-color: rgb(68, 6, 104);
+    box-shadow: 5px 8px 8px -5px #000000;
+  }
+  
+  .btn-logo:hover {
+    border: 2px solid rgb(88, 9, 134);
+    color: rgb(218, 218, 218);
+    background-color:rgb(88, 9, 134);
+    box-shadow:5px 8px 8px -8px #000000;
+  }
+  
+  
+  .btn-silver {
+    border: 2px solid rgb(135, 130, 138);
+    color: white;
+    background-color: rgb(135, 130, 138);
+    box-shadow: 5px 8px 8px -5px #000000;
+  }
+  
+  .btn-silver:hover {
+    border: 2px solid rgb(118, 116, 119);
+    color: rgb(218, 218, 218);
+    background-color:rgb(118, 116, 119);
+    box-shadow:5px 8px 8px -8px #000000;
+  }
+
+  .btn-outline-logo{
+      border-color: rgb(88, 9, 134);
+      color:rgb(88, 9, 134)
+  }
+  .btn-outline-logo:hover {
+      border-color: rgb(88, 9, 134);
+      background-color: rgb(88, 9, 134);
+      color: white;
+  }

@@ -1,0 +1,195 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% load humanize %}
+
+{% block body %}
+
+<h1 class="text-center mb-3 baskerville-font">{{listing.title}}</h1>
+<p class="text-muted text-center baskerville-font">{{listing.description}}</p>
+<hr class="mb-3">
+<div class="row">
+    <!-- AUCTION ITEM COLUMN -->
+    <div class="col-12 col-lg-4 order-1 order-lg-1">
+
+        <div class="card mb-2">
+            {% if listing.url %}
+            <img class="card-img-top img-fluid" src="{{listing.url}}" alt="{{listing.url}}">
+            {% else %}
+            <img class="card-img-top img-fluid" src="{% static 'auctions/images/default.jpg' %}" alt="Default Image">
+            {% endif %}
+
+            <div class="card-body">
+                <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><strong>Starting Bid</strong>:
+                        ${{listing.starting_bid|floatformat:2|intcomma}}</li>
+
+                    {% if listing.high_bid.bid_amount %}
+                    <li class="list-group-item"><strong>Current Bid:</strong>
+                        ${{listing.high_bid.bid_amount|floatformat:2|intcomma}}</li>
+                    {% else %}
+                    <li class="list-group-item"><strong>Current Bid:</strong>
+                        ${{listing.starting_bid|floatformat:2|intcomma}}
+                        {% endif %}
+
+                    <li class="list-group-item"><strong>Category </strong>: {{listing.category}} </li>
+
+                    {% if high_bid.bidder %}
+                    <li class="list-group-item"><strong>High Bidder</strong>: {{high_bid.bidder}}</li>
+                    {% else %}
+                    <li class="list-group-item"><strong>High Bidder</strong>: No bids yet!</li>
+                    {% endif %}
+
+                    <li class="list-group-item"><strong>Listed By</strong>: {{listing.listed_by}} </li>
+
+
+
+                    {% if listing.ended %}
+                    <div class="alert alert-success" role="alert">
+                        Auction Ended!
+                    </div>
+                    {% if listing.winner %}
+                    <li class="list-group-item"><strong>Winner</strong>: {{listing.winner}}</li>
+
+                    {% else %}
+                    <li class="list-group-item"><strong>Winner</strong>: No Winner</li>
+                    {% endif %}
+                    {% endif %}
+
+                </ul>
+
+
+
+
+            </div>
+
+
+        </div>
+    </div>
+
+
+
+    <!-- AUCTION ACTIONS COLUMN -->
+    <div class="col-12 col-lg-4 order-2 order-lg-2">
+        <div class="dot-thirty">
+            {% if user.is_authenticated %}
+            {% if not listing.ended %}
+            {% if not listing.listed_by == user %}
+            <div class="form-background">
+                <div class="row">
+                    <div class="col-12">
+                        <h3 class=" baskerville-font">Place your bid below: </h3>
+                        <p>Bid amount must be equal to or greater than
+                            {% if listing.high_bid.bid_amount %}
+                            ${{listing.high_bid.bid_amount|floatformat:2|intcomma}}</p>
+                        {% else %}
+                        ${{listing.starting_bid|floatformat:2|intcomma}}
+                        {% endif %}
+                        <form action="{% url 'bid' listing.id %}" class="mb-3" method="POST">
+                            {{bidForm}}
+                            {% csrf_token %}
+                            <input type="submit" value="Place Bid" class="btn btn-logo">
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+            <hr>
+            {% endif %}
+            {% else %}
+            {% if user == listing.winner %}
+            <div class="alert alert-success" role="alert">
+                You won this auction!
+            </div>
+            {% endif %}
+
+            {% endif %}
+            {% endif %}
+
+            {% if user.is_authenticated %}
+            <h3 class="baskerville-font text-center">Other actions:</h3>
+            <div class="row text-center">
+                {% if listing.listed_by == user %}
+                {% if not listing.ended %}
+                <div class="col">
+
+                    <form action="{% url 'end_auction' listing.id %}" method="POST">
+                        <input type="hidden" value="{{listing.id}}" name="listing" />
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-silver">End Auction</button>
+                    </form>
+
+                </div>
+
+                {% endif %}
+                {% endif %}
+                {% if not listing.listed_by == user %}
+                <div class="col mb-3">
+                    <form action="{% url 'watchlist' listing.id %}" method="POST">
+                        {% csrf_token %}
+                        {% if watchlist %}
+                        <input type="hidden" value="{{listing.id}}" name="listing">
+                        <button class="btn btn-logo" href="{% url 'watchlist' listing.id %}">Remove from
+                            watchlist</button>
+                        {% else %}
+                        <input type="hidden" value="{{listing.id}}" name="listing">
+                        <button class="btn btn-logo" href="{% url 'watchlist' listing.id %}">Add to
+                            watchlist</button>
+                        {% endif %}
+                    </form>
+                </div>
+                {% endif %}
+            </div>
+            <hr>
+            {% endif %}
+
+
+            {% if user.is_authenticated %}
+            <form action="{%url 'add_comment' listing.id %}" method="POST">
+                {{commentform}}
+                {% csrf_token %}
+                <button class="btn btn-logo mb-5">Add comment</button>
+            </form>
+            {% endif %}
+
+
+
+        </div>
+    </div>
+
+
+    <!-- COMMENTS COLUMN -->
+    <div class="col-12 col-lg-4 order-3 order-lg-3">
+        <div class="dot-thirty">
+            <h3 class="baskerville-font">Comments on this item:</h3>
+
+            {% if comments %}
+            {% for item in comments %}
+            <div class="ms-2 me-auto comments-background">
+                <div class="fw-bold">{{item.user}} said:</div>
+                {{item.content}}
+            </div>
+            {% endfor %}
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{% endblock %}

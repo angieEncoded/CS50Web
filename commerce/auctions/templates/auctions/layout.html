@@ -1,0 +1,117 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <title>{% block title %}Auctions{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Merriweather&family=Noticia+Text&family=Roboto&family=Work+Sans:wght@100;400&display=swap"
+        rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <link rel="stylesheet"
+        href="https://maxst.icons8.com/vue-static/landings/line-awesome/line-awesome/1.3.0/css/line-awesome.min.css">
+    <link href="{% static 'auctions/styles.css' %}" rel="stylesheet">
+    <link rel="icon" type="image/x-icon" href="{% static 'auctions/images/favicon.ico' %}" />
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-xl navbar-dark bg-dark mb-5 fixed-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="{% url 'index' %}">Auctions</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText"
+                aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarText">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link {% if navlistings %}active{% endif %}" href="{% url 'index' %}">Active
+                            Listings</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if navcategories %}active{% endif %}"
+                            href="{% url 'categories' %}">Categories</a>
+                    </li>
+
+
+                    {% if user.is_authenticated %}
+                    <!-- lock these behind login after -->
+                    <li class="nav-item">
+                        <a class="nav-link {% if navnewlisting %}active{% endif %}" href="{% url 'new' %}">Create
+                            Listing</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if navwatchlist %}active{% endif %}"
+                            href="{% url 'mywatcheditems' user.id %}">Watchlist</a>
+                    </li>
+
+                    <li class="nav-item">
+                        <a class="nav-link {% if navwonauctions %}active{% endif %}"
+                            href="{% url 'won_auctions' user.id %}">Won Auctions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if navmylistings %}active{% endif %}"
+                            href="{% url 'my_listings' user.id %}">My Listings</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if navregister %}active{% endif %}"
+                            href="{% url 'register' %}">Register</a>
+                    </li>
+                    {% endif %}
+                </ul>
+
+                <span class="navbar-text me-5">
+                    {% if user.is_authenticated %}
+                    Welcome to the auction house, <strong>{{ user.username }}</strong>!
+                    {% endif %}
+                </span>
+                <ul class="navbar-nav  mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'logout' %}">Log Out</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link {% if navlogin %}active{% endif %}" href="{% url 'login' %}">Log In</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+
+    <div class="container-fluid">
+        <!-- Add flash messaging for errors -->
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-{{message.tags}} alert-dismissible fade show text-center" role="alert">
+            {{ message }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        {% endfor %}
+
+        {% endif %}
+
+
+
+
+
+        {% block body %}
+        {% endblock %}
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+</body>
+
+</html>

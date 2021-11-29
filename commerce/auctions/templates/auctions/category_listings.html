@@ -1,0 +1,69 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% load humanize %}
+{% block body %}
+
+
+
+
+{% if results%}
+
+{% for item in results %}
+<div class="col">
+    <div class="card h-100 auction-backdrop-dark">
+        <div class="auction-card-img-container">
+
+            <a href="{% url 'listing' item.id %}">
+                {% if item.url %}
+                <img class="auction-card-img-top" src="{{item.url}}" alt="{{item.url}}">
+                {% else %}
+                <img class="auction-card-img-top" src="{% static 'auctions/images/default.jpg' %}" alt="Default Image">
+                {% endif %}
+
+                <i class="las la-arrow-right"></i>
+            </a>
+        </div>
+
+        <div class="card-body">
+            <h5 class="card-title">{{item.title}}</h5>
+            <p class="card-text text-truncate">
+                {{item.description}}
+            </p>
+            <ul class="list-group list-group-flush">
+                {% if item.high_bid.bid_amount %}
+                <li class="list-group-item"><strong>Current Bid:</strong>
+                    ${{item.high_bid.bid_amount|floatformat:2|intcomma}}</li>
+                {% else %}
+                <li class="list-group-item"><strong>Current Bid:</strong> ${{item.starting_bid|floatformat:2|intcomma}}
+                    {% endif %}
+                <li class="list-group-item"><strong>Starting Bid:</strong> ${{item.starting_bid|floatformat:2|intcomma}}
+                </li>
+            </ul>
+        </div>
+        <div class="card-footer">
+            <div class="d-grid gap-2">
+                <a href="{% url 'listing' item.id %}" class="btn btn-logo">View this auction</a>
+
+            </div>
+
+        </div>
+    </div>
+</div>
+<div class="text-center mt-5">
+    <a class="category-link" href="{% url 'categories' %}">Back to all categories</a>
+</div>
+
+
+{% endfor%}
+{% else %}
+<div class="alert alert-primary text-center" role="alert">
+    There are no listings in that category!
+</div>
+<div class="text-center mt-5">
+    <a class="category-link" href="{% url 'categories' %}">Back to all categories</a>
+</div>
+
+
+{% endif%}
+
+{% endblock %}

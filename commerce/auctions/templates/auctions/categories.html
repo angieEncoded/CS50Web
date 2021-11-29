@@ -1,0 +1,46 @@
+{% extends "auctions/layout.html" %}
+{% load static %}
+{% block body %}
+<div class="container">
+
+
+    <h2 class="text-center  baskerville-font">Where would you like to go today?</h2>
+    <hr>
+    <div class="row mt-3 mb-5 row-cols-1 row-cols-md-2 row-cols-xl-4 g-2">
+
+        {% for item in categories %}
+        <div class="col">
+            <div class="card h-100 auction-backdrop-dark">
+                <div class="auction-card-img-container">
+
+                    <a href="{% url 'category_listings' item.id %}">
+                        {% if item.image %}
+                        <img class="auction-card-img-top" src="{% static 'auctions/images/' %}{{item.image}}"
+                            alt="{% static 'auctions/images/' %}{{item.image}}">
+                        {% else %}
+                        <img class="auction-card-img-top" src="{% static 'auctions/images/default.jpg' %}"
+                            alt="Default Image">
+                        {% endif %}
+
+                        <i class="las la-arrow-right"></i>
+                    </a>
+                </div>
+
+                <div class="card-body">
+                    <h5 class="card-title text-center">{{item.name}}</h5>
+                </div>
+                <div class="card-footer">
+                    <div class="d-grid gap-2">
+                        <a href="{% url 'category_listings' item.id %}" class="btn btn-logo">Check out the listings!</a>
+
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        {% endfor%}
+
+    </div>
+
+</div>
+{% endblock %}

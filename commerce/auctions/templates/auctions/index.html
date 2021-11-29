@@ -1,0 +1,69 @@
+{% extends "auctions/layout.html" %}
+<!-- Weird that I had to do this here, it doesn't seem to inherit from the layout? -->
+{% load static %}
+{% load humanize %}
+{% block body %}
+
+<div class="container">
+
+
+  <h2 class="text-center  baskerville-font">Active Listings</h2>
+
+
+  <div class="row mt-3 mb-5 row-cols-1 row-cols-md-2 row-cols-xl-4 g-2">
+
+    {% for item in results %}
+    <div class="col">
+      <div class="card h-100 auction-backdrop-dark">
+        <div class="auction-card-img-container">
+
+          <a href="{% url 'listing' item.id %}">
+            {% if item.url %}
+            <img class="auction-card-img-top" src="{{item.url}}" alt="{{item.url}}">
+            {% else %}
+            <img class="auction-card-img-top" src="{% static 'auctions/images/default.jpg' %}" alt="Default Image">
+            {% endif %}
+
+            <i class="las la-arrow-right"></i>
+          </a>
+        </div>
+
+        <div class="card-body">
+          <h5 class="card-title">{{item.title}}</h5>
+          <p class="card-text text-truncate">
+            {{item.description}}
+            <hr>
+          </p>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><strong>Category:</strong> {{item.category}}</li>
+
+            {% if item.high_bid.bid_amount %}
+            <li class="list-group-item"><strong>Current Bid:</strong>
+              ${{item.high_bid.bid_amount|floatformat:2|intcomma}}</li>
+            {% else %}
+            <li class="list-group-item"><strong>Current Bid:</strong> ${{item.starting_bid|floatformat:2|intcomma}}
+              {% endif %}
+            <li class="list-group-item"><strong>Starting Bid:</strong> ${{item.starting_bid|floatformat:2|intcomma}}
+            </li>
+          </ul>
+        </div>
+        <div class="card-footer">
+          <div class="d-grid gap-2">
+            <a href="{% url 'listing' item.id %}" class="btn btn-logo">View this auction</a>
+
+          </div>
+
+        </div>
+      </div>
+    </div>
+    {% endfor%}
+
+  </div>
+
+
+</div>
+
+
+
+
+{% endblock %}

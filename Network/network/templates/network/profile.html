@@ -1,0 +1,93 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <div class="card mx-auto" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">{{details.username}}</h5>
+            <h6 class="card-subtitle mb-2 text-muted">{{details.summary}}</h6>
+            <ul class="list-group list-group-flush">
+                <li class="list-group-item">Following: {{details.number_of_following}}</li>
+                <li class="list-group-item">Followers: {{details.number_of_followers}}</li>
+            </ul>
+
+            <!-- If the user is authenticated and is not logged in looking at their own page -->
+
+            {% if user.is_authenticated %}
+            {% if not details.id == user.id %}
+
+
+            {% if amifollowing %}
+            <form action="{% url 'unfollow' details.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-logo" type="submit">Unfollow user!</button>
+            </form>
+
+            {% else %}
+            <form action="{% url 'follow' details.id %}" method="POST">
+                {% csrf_token %}
+                <button class="btn btn-logo" type="submit">Follow user!</button>
+            </form>
+            {% endif %}
+            {% endif %}
+            {% endif %}
+
+
+
+
+
+
+
+        </div>
+    </div>
+
+    <hr>
+    <h2 class="text-center">My Posts:</h2>
+    {% for item in posts %}
+
+    <div class="card mx-auto mb-1">
+        <div class="card-header">
+            Posted On: {{item.posted_on}} Post id: {{item.id}}
+        </div>
+        <div class="card-body">
+            <h5 class="card-title"></h5>
+            <p class="card-text">{{item.content}}</p>
+            <p><i class="las la-heart likes-color"></i>: {{item.number_of_likes}}</p>
+        </div>
+    </div>
+    {% endfor %}
+
+
+
+    {% if lastPage > 0 %}
+    <div class="row  my-5">
+        <div class="col-12 col-md-4 text-center text-md-end mb-2">
+            {% if hasPreviousPage %}
+            <a class="btn btn-sm  btn-logo" href="{% url 'profile' details.id %}?page={{ previousPage }}" aria-label="Previous"><i class="las la-caret-square-left la-2x"></i></a>
+            {% else %}
+            <a class="btn  btn-sm btn-logo" href="{% url 'profile' details.id %}?page=1" aria-label="Previous"><i class="las la-caret-square-left la-2x"></i></a>
+            {% endif %}
+        </div>
+        <div class="col-12 col-md-4 text-center">
+            <span class="fw-bold msi-text-dark mx-1">Page {{ currentPage }} of {{ lastPage }}</span>
+        </div>
+        <div class="col-12 col-md-4 text-center text-md-start mt-2">
+            {% if hasNextPage %}
+            <a class="btn  btn-sm btn-logo" href="{% url 'profile' details.id %}?page={{ nextPage }}" aria-label="Previous"><i class="las la-caret-square-right la-2x"></i></a>
+            {% else %}
+            <a class="btn  btn-sm  btn-logo" href="{% url 'profile' details.id %}?page={{ lastPage }}" aria-label="Previous"><i class="las la-caret-square-right la-2x"></i></a>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <h2 class="text-center">No Posts!</h2>
+    {% endif%}
+
+
+
+</div>
+
+
+
+{% endblock %}

@@ -1,0 +1,99 @@
+/* To adjust for bootstrap navbar */
+body{
+    margin-top: 70px;
+}
+
+a {
+  color: rgb(164, 169, 245);
+  text-decoration: none;
+}
+
+a:hover{
+  color: rgb(6, 27, 218);
+}
+
+.likes-color{
+  color:crimson;
+}
+/* a:visited {
+  color: rgb(140, 124, 149);
+} */
+
+/* Some of my other standard styles */
+.form-background{
+    background-color: rgba(207, 189, 255, 0.548);
+    /* background-color: rgba(19, 18, 18, 0.548); */
+    padding: 10px;
+    border-radius: 4px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+
+.form-small {
+  max-width: 20rem;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 2rem;
+}
+
+
+
+.dot-thirty{
+    max-width: 30rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+/* bootstrap overrides for buttons */
+.btn-logo {
+    border: 2px solid blueviolet;
+    color: white;
+    background-color: blueviolet;
+    box-shadow: 5px 8px 8px -5px #000000;
+  }
+  
+  .btn-logo:hover {
+    border: 2px solid blueviolet;
+    color: blueviolet;
+    background-color:white;
+    box-shadow:5px 8px 8px -8px #000000;
+  }
+  
+  
+  .btn-silver {
+    border: 2px solid rgb(135, 130, 138);
+    color: white;
+    background-color: rgb(135, 130, 138);
+    box-shadow: 5px 8px 8px -5px #000000;
+  }
+  
+  .btn-silver:hover {
+    border: 2px solid rgb(118, 116, 119);
+    color: rgb(218, 218, 218);
+    background-color:rgb(118, 116, 119);
+    box-shadow:5px 8px 8px -8px #000000;
+  }
+
+
+  .like-button {
+    color:blueviolet;
+    border-color: blueviolet;
+  }
+
+  .like-button:hover{
+    background-color: blueviolet;
+    color: white;
+  }
+
+
+  .unlike-button {
+    background-color: blueviolet;
+    color: white;
+    border-color: white;
+  }
+
+  .unlike-button:hover{
+    background-color: white;
+    color: blueviolet;
+    border-color: blueviolet;
+  }

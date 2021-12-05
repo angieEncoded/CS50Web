@@ -1,0 +1,22 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+
+<div class="container">
+    <h2>New Post</h2>
+    <form action="{% url 'newpost' %}" t={addPost} method="POST">
+        {{form}}
+        <div class="text-end">
+            <button class="btn btn-logo mx-1" type="submit">Submit</button>
+        </div>
+        {% csrf_token %}
+    </form>
+    <hr />
+</div>
+
+
+
+
+
+{% endblock %}

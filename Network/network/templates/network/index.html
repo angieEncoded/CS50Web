@@ -1,0 +1,88 @@
+{% extends "network/layout.html" %}
+
+{% block body %}
+
+<div class="container">
+    <!-- a container for front end js errors -->
+    <div id="js-feedback"></div>
+    {% for item in posts %}
+    <div class="card mx-auto mb-1">
+        <div class="card-header">
+            on {{item.post.posted_on}},
+            <a href="{% url 'profile' item.post.posted_by.id %}">
+
+                {% if item.post.posted_by != user%}
+                {{item.post.posted_by}}
+                {% else %}
+                You
+                {% endif%}
+
+            </a>posted:
+
+            <span id="feedback-{{item.post.id}}"></span>
+        </div>
+        <div class="container mt-2 mb-2" id="edit-root-{{item.post.id}}"></div>
+        <div class="card-body" id="hideme-{{item.post.id}}">
+            <p class="card-text" id="content-{{item.post.id}}">{{item.post.content}}</p>
+            <p id="likes-{{item.post.id}}"><i class="las la-heart likes-color"></i>: {{item.post.number_of_likes}}</p>
+
+            <!-- Deal with the edit post button -->
+            {% if item.post.posted_by == user %}
+            <div>
+                <button class="btn btn-sm btn-silver float-end" onclick="editPost(`{{item.post.id}}`)">Edit post</button>
+            </div>
+            {% endif%}
+
+
+
+
+
+            {% if user.is_authenticated %}
+            {% if item.post.posted_by != user%}
+            <div id="like-unlike-post-{{item.post.id}}">
+                {% if item.liked %}
+                <button class="btn btn-sm btn-outline-secondary unlike-button" onclick="unlikePost(`{{item.post.id}}`)">Unlike <i class="las la-thumbs-up la-1x"></i></button>
+                {% else %}
+                <button class="btn btn-sm btn-outline-secondary like-button" onclick="likePost(`{{item.post.id}}`)">Like! <i class="las la-thumbs-up la-1x"></i></button>
+                {% endif%}
+            </div>
+            {% endif%}
+            {% endif%}
+
+
+
+
+
+        </div>
+    </div>
+    {% endfor %}
+
+
+    {% if lastPage > 0 %}
+    <div class="row  my-5">
+        <div class="col-12 col-md-4 text-center text-md-end mb-2">
+            {% if hasPreviousPage %}
+            <a class="btn btn-sm  btn-logo" href="{% url 'index' %}?page={{ previousPage }}" aria-label="Previous"><i class="las la-caret-square-left la-2x"></i></a>
+            {% else %}
+            <a class="btn  btn-sm btn-logo" href="{% url 'index' %}?page=1" aria-label="Previous"><i class="las la-caret-square-left la-2x"></i></a>
+            {% endif %}
+        </div>
+        <div class="col-12 col-md-4 text-center">
+            <span class="fw-bold msi-text-dark mx-1">Page {{ currentPage }} of {{ lastPage }}</span>
+        </div>
+        <div class="col-12 col-md-4 text-center text-md-start mt-2">
+            {% if hasNextPage %}
+            <a class="btn  btn-sm btn-logo" href="{% url 'index' %}?page={{ nextPage }}" aria-label="Next"><i class="las la-caret-square-right la-2x"></i></a>
+            {% else %}
+            <a class="btn  btn-sm  btn-logo" href="{% url 'index' %}?page={{ lastPage }}" aria-label="Next"><i class="las la-caret-square-right la-2x"></i></a>
+            {% endif %}
+        </div>
+    </div>
+    {% else %}
+    <h2 class="text-center">No Posts!</h2>
+    {% endif%}
+
+
+</div>
+
+{% endblock %}
